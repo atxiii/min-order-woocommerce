@@ -138,9 +138,7 @@ class Mrcatdev_Min_Order_Admin {
 		if(empty($minimum)) $minimum=0;
 
 		if (WC()->cart->total < $minimum ) {
-		remove_action('woocommerce_proceed_to_checkout',
-				'woocommerce_button_proceed_to_checkout', 20 );
-
+			remove_action('woocommerce_proceed_to_checkout','woocommerce_button_proceed_to_checkout',20 );
 		}
 	}
 
