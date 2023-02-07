@@ -100,4 +100,90 @@ class Mrcatdev_Min_Order_Admin {
 
 	}
 
+	function wc_minimum_order_amount() {
+		// Set this variable to specify a minimum order value
+
+		$minimum = intval(get_option( 'wc_order_min_field' ));
+		if(empty($minimum)) $minimum=0;
+
+		if ( WC()->cart->subtotal < $minimum ) {
+
+			if( is_cart() ) {
+
+				wc_print_notice(
+					sprintf( 'حداقل مبلغ سفارش شما باید %s باشد، متاسفانه مبلغ سفارش شما %s است. ' ,
+
+						wc_price( $minimum ),
+							wc_price( WC()->cart->subtotal )
+					), 'error'
+				);
+
+			} else {
+
+				wc_add_notice(
+					sprintf( 'حداقل مبلغ سفارش شما باید %s باشد، متاسفانه مبلغ سفارش شما %s است. ' ,
+							wc_price( $minimum ),
+						wc_price( WC()->cart->subtotal )
+
+					), 'error'
+				);
+
+			}
+		}
+	}
+
+	function disable_checkout_button_no_shipping() {
+
+		$minimum = intval(get_option( 'wc_order_min_field' ));
+		if(empty($minimum)) $minimum=0;
+
+		if (WC()->cart->total < $minimum ) {
+		remove_action('woocommerce_proceed_to_checkout',
+				'woocommerce_button_proceed_to_checkout', 20 );
+
+		}
+	}
+
+
+	// Add custom tab to WooCommerce settings
+	function add_my_custom_tab( $settings_tabs ) {
+		$settings_tabs['my_tab'] = __( 'محدودیت سفارش', 'mrcatdev-min-order' );
+		return $settings_tabs;
+	}
+
+	// Add custom fields to the custom tab in WooCommerce settings
+	function add_my_custom_fields() {
+		woocommerce_admin_fields( array($this, 'get_my_custom_settings')() );
+	}
+
+  // Define the custom settings fields
+	function get_my_custom_settings() {
+		$settings = array(
+			'section_title' => array(
+			'name' => __( 'محدودیت سفارش', 'mrcatdev-min-order' ),
+			'type' => 'title',
+			'desc' => '',
+			'id' => 'wc_my_custom_section_title'
+			),
+			'order_min_field' => array(
+			'name' => __( 'حداقل مبلغ برای ثبت سفارش', 'mrcatdev-min-order' ),
+			'type' => 'number',
+			'desc' => __( 'مبلغ به تومان می باشد', 'mrcatdev-min-order' ),
+			'id' => 'wc_order_min_field'
+			),
+
+			'section_end' => array(
+			'type' => 'sectionend',
+			'id' => 'wc_my_custom_section_end'
+			)
+		);
+		return apply_filters( 'my_custom_settings', $settings );
+
+	}
+
+  // Save custom fields in WooCommerce settings
+	function save_my_custom_fields() {
+		woocommerce_update_options( array($this, 'get_my_custom_settings')() );
+	}
+
 }

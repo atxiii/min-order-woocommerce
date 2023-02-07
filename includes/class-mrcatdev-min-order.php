@@ -154,9 +154,15 @@ class Mrcatdev_Min_Order {
 
 		$plugin_admin = new Mrcatdev_Min_Order_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		// $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'woocommerce_checkout_process', $plugin_admin,'wc_minimum_order_amount' );
+		$this->loader->add_action( 'woocommerce_before_cart', $plugin_admin,'wc_minimum_order_amount' );
+		$this->loader->add_action('woocommerce_proceed_to_checkout','disable_checkout_button_no_shipping', 1);
+		$this->loader->add_filter( 'woocommerce_settings_tabs_array', $plugin_admin,'add_my_custom_tab', 50, 1 );
+		$this->loader->add_action( 'woocommerce_settings_my_tab', $plugin_admin,'add_my_custom_fields' );
+		$this->loader->add_action( 'woocommerce_update_options_my_tab', $plugin_admin,'save_my_custom_fields' );
 	}
 
 	/**
@@ -170,8 +176,8 @@ class Mrcatdev_Min_Order {
 
 		$plugin_public = new Mrcatdev_Min_Order_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 	}
 
